@@ -1,0 +1,35 @@
+workflows:
+  ios-build:
+    name: Build Island Mascot IPA
+    max_build_duration: 30
+    instance_type: mac_mini_m1
+    environment:
+      xcode: latest
+    scripts:
+      - name: Install XcodeGen
+        script: |
+          brew install xcodegen
+      - name: Generate Xcode Project
+        script: |
+          xcodegen generate
+      - name: Build and Package IPA
+        script: |
+          mkdir -p build/archive
+          mkdir -p build/ipa/Payload
+          
+          xcodebuild archive \
+            -project IslandMascot.xcodeproj \
+            -scheme IslandMascot \
+            -destination 'generic/platform=iOS' \
+            -configuration Release \
+            -archivePath build/archive/IslandMascot.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES
+            
+          cp -r build/archive/IslandMascot.xcarchive/Products/Applications/IslandMascot.app build/ipa/Payload/
+          cd build/ipa
+          zip -r -q IslandMascot.ipa Payload
+    artifacts:
+      - build/ipa/IslandMascot.ipa
