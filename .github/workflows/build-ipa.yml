@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     name: Build Island Mascot IPA
-    runs-on: macos-13 # Общедоступный стабильный раннер macOS Intel с предустановленным Xcode 15
+    runs-on: macos-latest # Актуальный поддерживаемый образ macOS
 
     steps:
       - name: Checkout Repository
