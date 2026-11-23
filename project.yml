@@ -3,17 +3,16 @@ options:
   bundleIdPrefix: com.islandmascot
   deploymentTarget:
     iOS: "16.2"
-  xcodeVersion: "15.0"
 
 settings:
   base:
     SWIFT_VERSION: "5.9"
+    SWIFT_STRICT_CONCURRENCY: "minimal"
     IPHONEOS_DEPLOYMENT_TARGET: "16.2"
     TARGETED_DEVICE_FAMILY: "1" # iPhone
     CODE_SIGNING_ALLOWED: NO
     CODE_SIGNING_REQUIRED: NO
     CODE_SIGN_IDENTITY: ""
-    AD_HOC_CODE_SIGNING_ALLOWED: YES
 
 targets:
   IslandMascot:
@@ -37,10 +36,8 @@ targets:
         CODE_SIGNING_ALLOWED: NO
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGN_IDENTITY: ""
-        SKIP_INSTALL: NO
     dependencies:
       - target: IslandMascotWidget
-        embed: true
 
   IslandMascotWidget:
     type: app-extension
@@ -64,4 +61,3 @@ targets:
         CODE_SIGNING_ALLOWED: NO
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGN_IDENTITY: ""
-        SKIP_INSTALL: YES

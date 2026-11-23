@@ -20,30 +20,25 @@ jobs:
       - name: Generate Xcode Project
         run: xcodegen generate
 
-      - name: Build and Archive
+      - name: Build Application and Widgets
         run: |
-          mkdir -p build/archive
+          mkdir -p build/out
           mkdir -p build/ipa/Payload
           
-          # Сборка под generic iOS без сертификата
-          xcodebuild archive \
+          # Чистая сборка .app без требования платного аккаунта Apple
+          xcodebuild build \
             -project IslandMascot.xcodeproj \
             -scheme IslandMascot \
             -destination 'generic/platform=iOS' \
             -configuration Release \
-            -archivePath build/archive/IslandMascot.xcarchive \
-            -quiet \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            AD_HOC_CODE_SIGNING_ALLOWED=YES
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            CONFIGURATION_BUILD_DIR="$(pwd)/build/out"
 
-      - name: Package into .IPA
+      - name: Package into IPA
         run: |
-          # Копируем .app внутрь каталога Payload
-          cp -r build/archive/IslandMascot.xcarchive/Products/Applications/IslandMascot.app build/ipa/Payload/
-          
-          # Упаковываем в готовый .ipa архив
+          cp -r build/out/IslandMascot.app build/ipa/Payload/
           cd build/ipa
           zip -r -q IslandMascot.ipa Payload
           cd ../..
