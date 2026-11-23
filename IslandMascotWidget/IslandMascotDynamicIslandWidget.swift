@@ -1,5 +1,6 @@
 import ActivityKit
 import SwiftUI
+import UIKit
 import WidgetKit
 
 /// Конфигурация Live Activity & Dynamic Island
@@ -9,7 +10,6 @@ struct IslandMascotDynamicIslandWidget: Widget {
             // Представление для Экрана блокировки (Lock Screen Banner)
             LockScreenMascotBanner(state: context.state)
                 .activityBackgroundTint(Color.black.opacity(0.85))
-                .activitySystemActionForegroundColor(Color.white)
         } dynamicIsland: { context in
             DynamicIsland {
                 // РАЗВЕРНУТЫЙ ВИД ОСТРОВА (Expanded)
@@ -91,7 +91,7 @@ struct IslandMascotDynamicIslandWidget: Widget {
                 }
                 .padding(.trailing, 4)
             } minimal: {
-                // МИНИМАЛЬНЫЙ ВИД (когда несколько Live Activities)
+                // МИНИМАЛЬНЫЙ ВИД
                 Text(context.state.faceEmoji)
                     .font(.system(size: 12))
             }
@@ -139,4 +139,3 @@ struct LockScreenMascotBanner: View {
         .padding(14)
     }
 }
-

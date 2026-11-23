@@ -33,3 +33,4 @@ workflows:
           zip -r -q IslandMascot.ipa Payload
     artifacts:
       - build/ipa/IslandMascot.ipa
+

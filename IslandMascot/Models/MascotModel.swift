@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 /// Состояния и действия маскота
-enum MascotActivity: String, Codable, CaseIterable {
+public enum MascotActivity: String, Codable, CaseIterable {
     case idle = "Отдыхает"
     case playing = "Играет"
     case sleeping = "Спит"
@@ -11,7 +11,7 @@ enum MascotActivity: String, Codable, CaseIterable {
     case reading = "Читает книжку"
     case dancing = "Танцует"
     
-    var emoji: String {
+    public var emoji: String {
         switch self {
         case .idle: return "🐱"
         case .playing: return "🧶"
@@ -25,7 +25,7 @@ enum MascotActivity: String, Codable, CaseIterable {
 }
 
 /// Настроение маскота
-enum MascotMood: String, Codable {
+public enum MascotMood: String, Codable {
     case ecstatic = "В восторге!"
     case happy = "Счастлив"
     case neutral = "Спокоен"
@@ -33,7 +33,7 @@ enum MascotMood: String, Codable {
     case hungry = "Голоден"
     case sad = "Скучает"
     
-    var faceEmoji: String {
+    public var faceEmoji: String {
         switch self {
         case .ecstatic: return "😻"
         case .happy: return "😺"
@@ -46,16 +46,34 @@ enum MascotMood: String, Codable {
 }
 
 /// Основная модель питомца
-struct Mascot: Codable, Equatable {
-    var name: String = "Бубу"
-    var hunger: Double = 85.0     // 0 = голодный, 100 = сытый
-    var energy: Double = 90.0     // 0 = без сил, 100 = бодр
-    var happiness: Double = 80.0  // 0 = грустный, 100 = радостный
-    var lastUpdated: Date = Date()
-    var currentActivity: MascotActivity = .idle
-    var thoughtBubble: String = "Мурр, как хорошо жить!"
+public struct Mascot: Codable, Equatable {
+    public var name: String = "Бубу"
+    public var hunger: Double = 85.0
+    public var energy: Double = 90.0
+    public var happiness: Double = 80.0
+    public var lastUpdated: Date = Date()
+    public var currentActivity: MascotActivity = .idle
+    public var thoughtBubble: String = "Мурр, как хорошо жить!"
     
-    var mood: MascotMood {
+    public init(
+        name: String = "Бубу",
+        hunger: Double = 85.0,
+        energy: Double = 90.0,
+        happiness: Double = 80.0,
+        lastUpdated: Date = Date(),
+        currentActivity: MascotActivity = .idle,
+        thoughtBubble: String = "Мурр, как хорошо жить!"
+    ) {
+        self.name = name
+        self.hunger = hunger
+        self.energy = energy
+        self.happiness = happiness
+        self.lastUpdated = lastUpdated
+        self.currentActivity = currentActivity
+        self.thoughtBubble = thoughtBubble
+    }
+    
+    public var mood: MascotMood {
         if hunger < 25 {
             return .hungry
         } else if energy < 25 {
@@ -71,8 +89,7 @@ struct Mascot: Codable, Equatable {
         }
     }
     
-    /// Генерация случайных мыслей в зависимости от состояния
-    static func randomThought(for activity: MascotActivity, mood: MascotMood) -> String {
+    public static func randomThought(for activity: MascotActivity, mood: MascotMood) -> String {
         switch (activity, mood) {
         case (.sleeping, _):
             return ["Сплю сладким сном... zZz", "Снятся рыбки и молочко", "Тихо-тихо... мурр"].randomElement()!
@@ -98,4 +115,3 @@ struct Mascot: Codable, Equatable {
         }
     }
 }
-

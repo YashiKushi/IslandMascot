@@ -25,13 +25,14 @@ jobs:
           mkdir -p build/archive
           mkdir -p build/ipa/Payload
           
-          # Сборка под generic iOS без платного сертификата
+          # Сборка под generic iOS без сертификата
           xcodebuild archive \
             -project IslandMascot.xcodeproj \
             -scheme IslandMascot \
             -destination 'generic/platform=iOS' \
             -configuration Release \
             -archivePath build/archive/IslandMascot.xcarchive \
+            -quiet \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \

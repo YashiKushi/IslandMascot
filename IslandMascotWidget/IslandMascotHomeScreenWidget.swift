@@ -1,5 +1,6 @@
 import WidgetKit
 import SwiftUI
+import UIKit
 
 // Запись в таймлайне виджета
 struct MascotTimelineEntry: TimelineEntry {
@@ -28,15 +29,12 @@ struct MascotTimelineProvider: TimelineProvider {
         var entries: [MascotTimelineEntry] = []
         let currentDate = Date()
         
-        // Генерируем точки во времени на ближайшие 2 часа каждые 20 минут,
-        // чтобы маскот автономно менял свои занятия на экране!
         let activities: [MascotActivity] = [.idle, .exploring, .reading, .dancing, .playing]
         
         for minuteOffset in stride(from: 0, through: 120, by: 20) {
             let entryDate = Calendar.current.date(byAdding: .minute, value: minuteOffset, to: currentDate)!
             var simulatedMascot = currentMascot
             
-            // Если маскот не спит, каждые 20 минут он может заняться чем-то новым
             if simulatedMascot.currentActivity != .sleeping && minuteOffset > 0 {
                 let randomAct = activities.randomElement() ?? .idle
                 simulatedMascot.currentActivity = randomAct
@@ -53,13 +51,11 @@ struct MascotTimelineProvider: TimelineProvider {
     }
     
     private func loadCurrentMascot() -> Mascot {
-        // Пробуем прочитать из AppGroup
         if let groupDefaults = UserDefaults(suiteName: userDefaultsSuite),
            let data = groupDefaults.data(forKey: mascotStorageKey),
            let mascot = try? JSONDecoder().decode(Mascot.self, data) {
             return mascot
         }
-        // Либо стандартный UserDefaults
         if let data = UserDefaults.standard.data(forKey: mascotStorageKey),
            let mascot = try? JSONDecoder().decode(Mascot.self, data) {
             return mascot
@@ -75,7 +71,6 @@ struct IslandMascotHomeScreenWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: MascotTimelineProvider()) { entry in
             MascotWidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
         }
         .configurationDisplayName("Мой Питомец")
         .description("Живой маскот прямо на твоем экране iPhone.")
@@ -89,14 +84,17 @@ struct MascotWidgetEntryView: View {
     @Environment(\.widgetFamily) var family
     
     var body: some View {
-        switch family {
-        case .systemSmall:
-            SmallMascotWidgetView(mascot: entry.mascot)
-        case .systemMedium:
-            MediumMascotWidgetView(mascot: entry.mascot)
-        default:
-            SmallMascotWidgetView(mascot: entry.mascot)
+        Group {
+            switch family {
+            case .systemSmall:
+                SmallMascotWidgetView(mascot: entry.mascot)
+            case .systemMedium:
+                MediumMascotWidgetView(mascot: entry.mascot)
+            default:
+                SmallMascotWidgetView(mascot: entry.mascot)
+            }
         }
+        .padding(8)
     }
 }
 
@@ -135,7 +133,6 @@ struct SmallMascotWidgetView: View {
                         .fill(Color.primary.opacity(0.06))
                 )
         }
-        .padding(8)
     }
 }
 
@@ -145,7 +142,6 @@ struct MediumMascotWidgetView: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            // Левая часть: персонаж и облачко
             VStack(spacing: 6) {
                 Text(mascot.mood.faceEmoji)
                     .font(.system(size: 54))
@@ -159,7 +155,6 @@ struct MediumMascotWidgetView: View {
             
             Divider()
             
-            // Правая часть: шкалы и фраза
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text(mascot.name)
@@ -189,7 +184,6 @@ struct MediumMascotWidgetView: View {
                 }
             }
         }
-        .padding(10)
     }
 }
 
@@ -209,4 +203,3 @@ struct MiniStatView: View {
         }
     }
 }
-
