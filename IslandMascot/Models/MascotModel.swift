@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 /// Состояния и действия маскота
-public enum MascotActivity: String, Codable, CaseIterable {
+public enum MascotActivity: String, Codable, CaseIterable, Sendable {
     case idle = "Отдыхает"
     case playing = "Играет"
     case sleeping = "Спит"
@@ -25,7 +25,7 @@ public enum MascotActivity: String, Codable, CaseIterable {
 }
 
 /// Настроение маскота
-public enum MascotMood: String, Codable {
+public enum MascotMood: String, Codable, Sendable {
     case ecstatic = "В восторге"
     case happy = "Счастлив"
     case neutral = "Спокоен"
@@ -46,7 +46,7 @@ public enum MascotMood: String, Codable {
 }
 
 /// Основная модель питомца
-public struct Mascot: Codable, Equatable {
+public struct Mascot: Codable, Equatable, Sendable {
     public var name: String = "Люми"
     public var hunger: Double = 85.0
     public var energy: Double = 90.0

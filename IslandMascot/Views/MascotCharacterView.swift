@@ -175,7 +175,7 @@ struct EyeView: View {
     
     var body: some View {
         ZStack {
-            if mood == .tired || mood == .sleepingCondition {
+            if mood == .tired {
                 // Закрытые сонные глазки (дуги вниз)
                 Path { p in
                     p.move(to: CGPoint(x: 0, y: size * 0.4))
@@ -210,11 +210,6 @@ struct EyeView: View {
     }
 }
 
-extension MascotMood {
-    var sleepingCondition: Bool {
-        return self == .tired
-    }
-}
 
 // Векторный ротик
 struct MouthShape: Shape {
