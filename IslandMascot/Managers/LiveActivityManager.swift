@@ -28,11 +28,16 @@ class LiveActivityManager {
             updatedDate: Date()
         )
         
+        let content = ActivityContent(
+            state: contentState,
+            staleDate: Calendar.current.date(byAdding: .hour, value: 4, to: Date())
+        )
+        
         // Проверяем, есть ли уже активная сессия Live Activity
         if let existingActivity = Activity<MascotAttributes>.activities.first {
             currentActivity = existingActivity
             Task {
-                await existingActivity.update(using: contentState)
+                await existingActivity.update(content)
             }
         } else {
             // Создаем новую
@@ -40,7 +45,7 @@ class LiveActivityManager {
             do {
                 let activity = try Activity.request(
                     attributes: attributes,
-                    content: .init(state: contentState, staleDate: Calendar.current.date(byAdding: .hour, value: 4, to: Date())),
+                    content: content,
                     pushType: nil
                 )
                 self.currentActivity = activity
@@ -55,10 +60,9 @@ class LiveActivityManager {
     func endActivity() {
         for activity in Activity<MascotAttributes>.activities {
             Task {
-                await activity.end(dismissalPolicy: .immediate)
+                await activity.end(nil, dismissalPolicy: .immediate)
             }
         }
         currentActivity = nil
     }
 }
-

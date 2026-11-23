@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct ContentView: View {
     @EnvironmentObject var manager: MascotManager
@@ -176,4 +177,3 @@ struct ActionButton: View {
         }
     }
 }
-

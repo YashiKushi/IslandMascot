@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct MascotCharacterView: View {
     var mascot: Mascot
@@ -98,4 +99,3 @@ struct Triangle: Shape {
         return path
     }
 }
-
