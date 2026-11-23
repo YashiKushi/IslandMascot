@@ -1,34 +1,37 @@
 import WidgetKit
 import SwiftUI
-import UIKit
 
-// Запись в таймлайне виджета
-struct MascotTimelineEntry: TimelineEntry {
-    let date: Date
-    let mascot: Mascot
+public struct MascotTimelineEntry: TimelineEntry {
+    public let date: Date
+    public let mascot: Mascot
+    
+    public init(date: Date, mascot: Mascot) {
+        self.date = date
+        self.mascot = mascot
+    }
 }
 
-// Провайдер данных для виджета домашнего экрана
-struct MascotTimelineProvider: TimelineProvider {
-    typealias Entry = MascotTimelineEntry
+public struct MascotTimelineProvider: TimelineProvider {
+    public typealias Entry = MascotTimelineEntry
     
     private let userDefaultsSuite = "group.com.islandmascot.app"
     private let mascotStorageKey = "saved_mascot_state"
     
-    func placeholder(in context: Context) -> MascotTimelineEntry {
+    public init() {}
+    
+    public func placeholder(in context: Context) -> MascotTimelineEntry {
         MascotTimelineEntry(date: Date(), mascot: Mascot())
     }
     
-    func getSnapshot(in context: Context, completion: @escaping (MascotTimelineEntry) -> Void) {
+    public func getSnapshot(in context: Context, completion: @escaping (MascotTimelineEntry) -> Void) {
         let entry = MascotTimelineEntry(date: Date(), mascot: loadCurrentMascot())
         completion(entry)
     }
     
-    func getTimeline(in context: Context, completion: @escaping (Timeline<MascotTimelineEntry>) -> Void) {
+    public func getTimeline(in context: Context, completion: @escaping (Timeline<MascotTimelineEntry>) -> Void) {
         let currentMascot = loadCurrentMascot()
         var entries: [MascotTimelineEntry] = []
         let currentDate = Date()
-        
         let activities: [MascotActivity] = [.idle, .exploring, .reading, .dancing, .playing]
         
         for minuteOffset in stride(from: 0, through: 120, by: 20) {
@@ -46,8 +49,7 @@ struct MascotTimelineProvider: TimelineProvider {
             entries.append(MascotTimelineEntry(date: entryDate, mascot: simulatedMascot))
         }
         
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        completion(timeline)
+        completion(Timeline(entries: entries, policy: .atEnd))
     }
     
     private func loadCurrentMascot() -> Mascot {
@@ -64,11 +66,12 @@ struct MascotTimelineProvider: TimelineProvider {
     }
 }
 
-// Виджет домашнего экрана
-struct IslandMascotHomeScreenWidget: Widget {
-    let kind: String = "IslandMascotHomeScreenWidget"
+public struct IslandMascotHomeScreenWidget: Widget {
+    public let kind: String = "IslandMascotHomeScreenWidget"
     
-    var body: some WidgetConfiguration {
+    public init() {}
+    
+    public var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: MascotTimelineProvider()) { entry in
             MascotWidgetEntryView(entry: entry)
         }
@@ -78,12 +81,11 @@ struct IslandMascotHomeScreenWidget: Widget {
     }
 }
 
-// Представление виджета
-struct MascotWidgetEntryView: View {
+public struct MascotWidgetEntryView: View {
     var entry: MascotTimelineProvider.Entry
     @Environment(\.widgetFamily) var family
     
-    var body: some View {
+    public var body: some View {
         Group {
             switch family {
             case .systemSmall:
@@ -98,11 +100,10 @@ struct MascotWidgetEntryView: View {
     }
 }
 
-// Компактный виджет (квадрат 2x2)
-struct SmallMascotWidgetView: View {
+public struct SmallMascotWidgetView: View {
     var mascot: Mascot
     
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 4) {
             HStack {
                 Text(mascot.name)
@@ -136,11 +137,10 @@ struct SmallMascotWidgetView: View {
     }
 }
 
-// Средний виджет (прямоугольник 2x4)
-struct MediumMascotWidgetView: View {
+public struct MediumMascotWidgetView: View {
     var mascot: Mascot
     
-    var body: some View {
+    public var body: some View {
         HStack(spacing: 16) {
             VStack(spacing: 6) {
                 Text(mascot.mood.faceEmoji)
@@ -187,13 +187,13 @@ struct MediumMascotWidgetView: View {
     }
 }
 
-struct MiniStatView: View {
+public struct MiniStatView: View {
     var label: String
     var value: Double
     var icon: String
     var color: Color
     
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 2) {
             Text(icon)
                 .font(.caption2)

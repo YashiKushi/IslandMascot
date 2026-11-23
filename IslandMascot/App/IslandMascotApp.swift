@@ -1,6 +1,4 @@
 import SwiftUI
-import UIKit
-import ActivityKit
 
 @main
 struct IslandMascotApp: App {
@@ -10,15 +8,6 @@ struct IslandMascotApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(mascotManager)
-                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
-                    mascotManager.saveState()
-                    if mascotManager.isLiveActivityEnabled {
-                        LiveActivityManager.shared.startOrUpdateActivity(with: mascotManager.mascot)
-                    }
-                }
-                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
-                    mascotManager.updateStatsOverTime()
-                }
         }
     }
 }

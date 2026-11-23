@@ -3,12 +3,10 @@ import UIKit
 
 struct ContentView: View {
     @EnvironmentObject var manager: MascotManager
-    @State private var showingInfoSheet = false
     
     var body: some View {
         NavigationView {
             ZStack {
-                // Фон
                 LinearGradient(
                     colors: [
                         Color(UIColor.systemBackground),
@@ -21,25 +19,6 @@ struct ContentView: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
-                        // Верхний статус Dynamic Island
-                        HStack {
-                            Label("Dynamic Island", systemImage: "sparkles")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            
-                            Spacer()
-                            
-                            Toggle("", isOn: $manager.isLiveActivityEnabled)
-                                .labelsHidden()
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .background(
-                            RoundedRectangle(cornerRadius: 14)
-                                .fill(Color(UIColor.tertiarySystemBackground))
-                        )
-                        .padding(.horizontal)
-                        
                         // Главная карточка маскота
                         VStack(spacing: 16) {
                             HStack {
@@ -127,11 +106,11 @@ struct ContentView: View {
                             HStack {
                                 Image(systemName: "hand.tap.fill")
                                     .foregroundColor(.accentColor)
-                                Text("Как добавить на экран?")
+                                Text("Как поставить виджет на экран?")
                                     .font(.headline)
                             }
                             
-                            Text("1. Зажми палец на любом пустом месте экрана iPhone.\n2. Нажми «+» в верхнем левом углу.\n3. Найди «Island Mascot» и выбери размер виджета.\n4. Питомец теперь живет прямо на твоем рабочем столе!")
+                            Text("1. Зажми палец на любом свободном месте экрана iPhone.\n2. Нажми «+» в верхнем левом углу.\n3. Найди «Island Mascot» в списке виджетов.\n4. Выбери размер (маленький или средний) и нажми «Добавить виджет»!\n5. Питомец теперь живёт прямо на твоем рабочем столе!")
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -148,7 +127,7 @@ struct ContentView: View {
                     .padding(.top)
                 }
             }
-            .navigationTitle("Island Mascot")
+            .navigationTitle("Мой Питомец")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
