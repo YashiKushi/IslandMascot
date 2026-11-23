@@ -1,5 +1,6 @@
 import WidgetKit
 import SwiftUI
+import UIKit
 
 public struct MascotTimelineEntry: TimelineEntry {
     public let date: Date
@@ -75,8 +76,8 @@ public struct IslandMascotHomeScreenWidget: Widget {
         StaticConfiguration(kind: kind, provider: MascotTimelineProvider()) { entry in
             MascotWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Мой Питомец")
-        .description("Живой маскот прямо на твоем экране iPhone.")
+        .configurationDisplayName("Люми Маскот")
+        .description("Живой процедурный питомец прямо на твоем экране.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
@@ -100,6 +101,7 @@ public struct MascotWidgetEntryView: View {
     }
 }
 
+// Маленький виджет (2x2)
 public struct SmallMascotWidgetView: View {
     var mascot: Mascot
     
@@ -107,98 +109,102 @@ public struct SmallMascotWidgetView: View {
         VStack(spacing: 4) {
             HStack {
                 Text(mascot.name)
-                    .font(.caption2)
-                    .fontWeight(.bold)
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
                     .foregroundColor(.secondary)
                 Spacer()
-                Text(mascot.currentActivity.emoji)
-                    .font(.caption2)
+                Image(systemName: mascot.currentActivity.sfSymbol)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.secondary)
             }
             
-            Spacer()
+            Spacer(minLength: 0)
             
-            Text(mascot.mood.faceEmoji)
-                .font(.system(size: 48))
+            // Векторный персонаж
+            MascotCharacterView(mascot: mascot, size: 75, isInteractive: false)
             
-            Spacer()
+            Spacer(minLength: 0)
             
             Text(mascot.thoughtBubble)
-                .font(.system(size: 10, weight: .medium, design: .rounded))
-                .foregroundColor(.primary)
-                .lineLimit(2)
+                .font(.system(size: 9, weight: .medium, design: .rounded))
+                .foregroundColor(.primary.opacity(0.85))
+                .lineLimit(1)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 4)
+                .padding(.horizontal, 6)
                 .padding(.vertical, 3)
                 .background(
-                    RoundedRectangle(cornerRadius: 8)
+                    Capsule()
                         .fill(Color.primary.opacity(0.06))
                 )
         }
     }
 }
 
+// Средний виджет (2x4)
 public struct MediumMascotWidgetView: View {
     var mascot: Mascot
     
     public var body: some View {
-        HStack(spacing: 16) {
-            VStack(spacing: 6) {
-                Text(mascot.mood.faceEmoji)
-                    .font(.system(size: 54))
+        HStack(spacing: 14) {
+            // Левая часть: персонаж
+            VStack(spacing: 4) {
+                MascotCharacterView(mascot: mascot, size: 85, isInteractive: false)
                 
-                Text(mascot.currentActivity.rawValue)
-                    .font(.caption2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.secondary)
+                HStack(spacing: 4) {
+                    Image(systemName: mascot.currentActivity.sfSymbol)
+                        .font(.system(size: 9))
+                    Text(mascot.currentActivity.rawValue)
+                        .font(.system(size: 9, weight: .semibold, design: .rounded))
+                }
+                .foregroundColor(.secondary)
             }
             .frame(width: 90)
             
             Divider()
             
+            // Правая часть: информация и индикаторы
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text(mascot.name)
-                        .font(.headline)
-                        .bold()
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
                     Spacer()
-                    Text(mascot.mood.rawValue)
-                        .font(.caption2)
-                        .bold()
+                    Label(mascot.mood.rawValue, systemImage: mascot.mood.sfSymbol)
+                        .font(.system(size: 9, weight: .bold, design: .rounded))
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
                         .background(Capsule().fill(Color.accentColor.opacity(0.15)))
+                        .foregroundColor(.accentColor)
                 }
                 
-                Text("\"\(mascot.thoughtBubble)\"")
-                    .font(.system(size: 11, design: .rounded))
-                    .italic()
-                    .lineLimit(2)
+                Text(mascot.thoughtBubble)
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
                     .foregroundColor(.primary.opacity(0.8))
+                    .lineLimit(2)
                 
                 Spacer()
                 
-                HStack(spacing: 12) {
-                    MiniStatView(label: "Сытость", value: mascot.hunger, icon: "🍔", color: .orange)
-                    MiniStatView(label: "Энергия", value: mascot.energy, icon: "⚡️", color: .yellow)
-                    MiniStatView(label: "Счастье", value: mascot.happiness, icon: "💖", color: .pink)
+                HStack(spacing: 10) {
+                    MiniSymbolStatView(label: "Сытость", value: mascot.hunger, sfSymbol: "fork.knife", color: .orange)
+                    MiniSymbolStatView(label: "Сила", value: mascot.energy, sfSymbol: "bolt.fill", color: .blue)
+                    MiniSymbolStatView(label: "Радость", value: mascot.happiness, sfSymbol: "heart.fill", color: .pink)
                 }
             }
         }
     }
 }
 
-public struct MiniStatView: View {
+public struct MiniSymbolStatView: View {
     var label: String
     var value: Double
-    var icon: String
+    var sfSymbol: String
     var color: Color
     
     public var body: some View {
         VStack(spacing: 2) {
-            Text(icon)
-                .font(.caption2)
+            Image(systemName: sfSymbol)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundColor(color)
             Text("\(Int(value))%")
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: 10, weight: .bold, design: .rounded))
                 .foregroundColor(color)
         }
     }

@@ -43,6 +43,7 @@ targets:
     sources:
       - path: IslandMascotWidget
       - path: IslandMascot/Models/MascotModel.swift
+      - path: IslandMascot/Views/MascotCharacterView.swift
     info:
       path: IslandMascotWidget/Info.plist
       properties:

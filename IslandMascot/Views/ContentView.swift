@@ -3,156 +3,203 @@ import UIKit
 
 struct ContentView: View {
     @EnvironmentObject var manager: MascotManager
+    @State private var reactionEffect: String? = nil
+    @State private var reactionScale: CGFloat = 1.0
+    @State private var petSquish: CGFloat = 1.0
     
     var body: some View {
         NavigationView {
             ZStack {
-                LinearGradient(
-                    colors: [
-                        Color(UIColor.systemBackground),
-                        Color(UIColor.secondarySystemBackground)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                Color(UIColor.systemGroupedBackground)
+                    .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(spacing: 24) {
-                        // Главная карточка маскота
+                    VStack(spacing: 22) {
+                        // Карточка питомца
                         VStack(spacing: 16) {
                             HStack {
-                                VStack(alignment: .leading, spacing: 2) {
+                                VStack(alignment: .leading, spacing: 3) {
                                     Text(manager.mascot.name)
-                                        .font(.title2)
-                                        .bold()
-                                    Text("Занятие: \(manager.mascot.currentActivity.rawValue)")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
+                                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                                    
+                                    HStack(spacing: 5) {
+                                        Image(systemName: manager.mascot.currentActivity.sfSymbol)
+                                            .font(.caption2)
+                                        Text(manager.mascot.currentActivity.rawValue)
+                                            .font(.caption)
+                                            .fontWeight(.medium)
+                                    }
+                                    .foregroundColor(.secondary)
                                 }
+                                
                                 Spacer()
-                                Text(manager.mascot.mood.rawValue)
-                                    .font(.caption)
-                                    .fontWeight(.bold)
+                                
+                                Label(manager.mascot.mood.rawValue, systemImage: manager.mascot.mood.sfSymbol)
+                                    .font(.system(size: 12, weight: .bold, design: .rounded))
                                     .padding(.horizontal, 10)
-                                    .padding(.vertical, 5)
-                                    .background(Capsule().fill(Color.accentColor.opacity(0.15)))
-                                    .foregroundColor(.accentColor)
+                                    .padding(.vertical, 6)
+                                    .background(Capsule().fill(moodAccentColor.opacity(0.15)))
+                                    .foregroundColor(moodAccentColor)
                             }
                             
-                            // Персонаж с облачком мыслей
-                            MascotCharacterView(mascot: manager.mascot)
-                                .padding(.vertical, 8)
-                                .onTapGesture {
-                                    manager.pet()
+                            // Векторный процедурный персонаж
+                            ZStack {
+                                MascotCharacterView(mascot: manager.mascot, size: 150)
+                                    .scaleEffect(petSquish)
+                                    .onTapGesture {
+                                        triggerReaction(symbol: "heart.fill")
+                                        manager.pet()
+                                    }
+                                
+                                // Всплывающая иконка эмоции при взаимодействии
+                                if let reaction = reactionEffect {
+                                    Image(systemName: reaction)
+                                        .font(.system(size: 32, weight: .bold))
+                                        .foregroundColor(moodAccentColor)
+                                        .scaleEffect(reactionScale)
+                                        .offset(y: -75)
+                                        .transition(.scale.combined(with: .opacity))
                                 }
+                            }
+                            .frame(height: 190)
                         }
-                        .padding()
+                        .padding(20)
                         .background(
-                            RoundedRectangle(cornerRadius: 22)
-                                .fill(Color(UIColor.tertiarySystemBackground))
-                                .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+                            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                                .fill(Color(UIColor.secondarySystemGroupedBackground))
+                                .shadow(color: Color.black.opacity(0.04), radius: 12, x: 0, y: 5)
                         )
                         .padding(.horizontal)
                         
                         // Шкалы состояния
-                        VStack(spacing: 14) {
-                            StatBarView(title: "Сытость", value: manager.mascot.hunger, color: .orange, icon: "🍔")
-                            StatBarView(title: "Энергия", value: manager.mascot.energy, color: .yellow, icon: "⚡️")
-                            StatBarView(title: "Счастье", value: manager.mascot.happiness, color: .pink, icon: "💖")
+                        VStack(spacing: 16) {
+                            StatBarView(title: "Энергия сытости", value: manager.mascot.hunger, color: .orange, sfSymbol: "fork.knife")
+                            StatBarView(title: "Жизненная сила", value: manager.mascot.energy, color: .blue, sfSymbol: "bolt.fill")
+                            StatBarView(title: "Уровень радости", value: manager.mascot.happiness, color: .pink, sfSymbol: "heart.fill")
                         }
-                        .padding()
+                        .padding(18)
                         .background(
-                            RoundedRectangle(cornerRadius: 18)
-                                .fill(Color(UIColor.tertiarySystemBackground))
+                            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                .fill(Color(UIColor.secondarySystemGroupedBackground))
                         )
                         .padding(.horizontal)
                         
-                        // Кнопки ухода за питомцем
+                        // Кнопки взаимодействия
                         VStack(spacing: 12) {
-                            Text("Взаимодействие")
-                                .font(.footnote)
-                                .foregroundColor(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal)
-                            
                             HStack(spacing: 12) {
-                                ActionButton(title: "Покормить", icon: "🍣", color: .orange) {
+                                EmoteActionButton(title: "Покормить", sfSymbol: "fork.knife", color: .orange) {
+                                    triggerReaction(symbol: "sparkles")
                                     manager.feed()
                                 }
-                                ActionButton(title: "Поиграть", icon: "🎾", color: .green) {
+                                EmoteActionButton(title: "Поиграть", sfSymbol: "gamecontroller.fill", color: .green) {
+                                    triggerReaction(symbol: "figure.play")
                                     manager.play()
                                 }
                             }
                             
                             HStack(spacing: 12) {
-                                ActionButton(
+                                EmoteActionButton(
                                     title: manager.mascot.currentActivity == .sleeping ? "Разбудить" : "Уложить спать",
-                                    icon: manager.mascot.currentActivity == .sleeping ? "☀️" : "🌙",
+                                    sfSymbol: manager.mascot.currentActivity == .sleeping ? "sun.max.fill" : "moon.stars.fill",
                                     color: .indigo
                                 ) {
+                                    triggerReaction(symbol: manager.mascot.currentActivity == .sleeping ? "sun.max.fill" : "moon.fill")
                                     manager.toggleSleep()
                                 }
                                 
-                                ActionButton(title: "Погладить", icon: "🥰", color: .pink) {
+                                EmoteActionButton(title: "Погладить", sfSymbol: "hand.wave.fill", color: .pink) {
+                                    triggerReaction(symbol: "heart.fill")
                                     manager.pet()
                                 }
                             }
                         }
                         .padding(.horizontal)
                         
-                        // Блок-подсказка про виджеты
+                        // Инструкция по установке виджета
                         VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Image(systemName: "hand.tap.fill")
-                                    .foregroundColor(.accentColor)
-                                Text("Как поставить виджет на экран?")
+                            HStack(spacing: 8) {
+                                Image(systemName: "plus.square.on.square")
                                     .font(.headline)
+                                    .foregroundColor(.accentColor)
+                                Text("Виджет на экране")
+                                    .font(.system(.headline, design: .rounded))
                             }
                             
-                            Text("1. Зажми палец на любом свободном месте экрана iPhone.\n2. Нажми «+» в верхнем левом углу.\n3. Найди «Island Mascot» в списке виджетов.\n4. Выбери размер (маленький или средний) и нажми «Добавить виджет»!\n5. Питомец теперь живёт прямо на твоем рабочем столе!")
+                            Text("1. Зажмите палец на пустом месте экрана iPhone.\n2. Нажмите «+» в верхнем углу.\n3. Выберите «Island Mascot» (маленький или средний).\n4. Нажмите «Добавить виджет». Питомец оживёт на рабочем столе!")
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
-                                .fixedSize(horizontal: false, vertical: true)
+                                .lineSpacing(3)
                         }
-                        .padding()
+                        .padding(18)
                         .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color(UIColor.tertiarySystemBackground))
+                            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                .fill(Color(UIColor.secondarySystemGroupedBackground))
                         )
                         .padding(.horizontal)
                         
-                        Spacer(minLength: 30)
+                        Spacer(minLength: 25)
                     }
-                    .padding(.top)
+                    .padding(.top, 10)
                 }
             }
             .navigationTitle("Мой Питомец")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
+    
+    private func triggerReaction(symbol: String) {
+        reactionEffect = symbol
+        reactionScale = 0.5
+        
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.5)) {
+            reactionScale = 1.3
+            petSquish = 1.12
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            withAnimation(.easeOut(duration: 0.3)) {
+                petSquish = 1.0
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            withAnimation(.easeOut(duration: 0.25)) {
+                reactionEffect = nil
+            }
+        }
+    }
+    
+    private var moodAccentColor: Color {
+        switch manager.mascot.mood {
+        case .ecstatic: return .orange
+        case .happy: return .green
+        case .neutral: return .blue
+        case .tired: return .indigo
+        case .hungry: return .orange
+        case .sad: return .secondary
+        }
+    }
 }
 
-struct ActionButton: View {
+struct EmoteActionButton: View {
     var title: String
-    var icon: String
+    var sfSymbol: String
     var color: Color
     var action: () -> Void
     
     var body: some View {
         Button(action: action) {
-            HStack {
-                Text(icon)
-                    .font(.title3)
+            HStack(spacing: 8) {
+                Image(systemName: sfSymbol)
+                    .font(.system(size: 16, weight: .bold))
                 Text(title)
-                    .font(.system(.subheadline, design: .rounded))
-                    .fontWeight(.semibold)
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
-            .background(color.opacity(0.15))
+            .background(color.opacity(0.12))
             .foregroundColor(color)
-            .cornerRadius(14)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
     }
 }

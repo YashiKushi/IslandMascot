@@ -7,62 +7,62 @@ public enum MascotActivity: String, Codable, CaseIterable {
     case playing = "Играет"
     case sleeping = "Спит"
     case eating = "Кушает"
-    case exploring = "Исследует мир"
-    case reading = "Читает книжку"
+    case exploring = "Исследует"
+    case reading = "Читает"
     case dancing = "Танцует"
     
-    public var emoji: String {
+    public var sfSymbol: String {
         switch self {
-        case .idle: return "🐱"
-        case .playing: return "🧶"
-        case .sleeping: return "💤"
-        case .eating: return "🍣"
-        case .exploring: return "🎒"
-        case .reading: return "📖"
-        case .dancing: return "🎶"
+        case .idle: return "sparkles"
+        case .playing: return "figure.play"
+        case .sleeping: return "moon.stars.fill"
+        case .eating: return "fork.knife"
+        case .exploring: return "binoculars.fill"
+        case .reading: return "book.fill"
+        case .dancing: return "music.note"
         }
     }
 }
 
 /// Настроение маскота
 public enum MascotMood: String, Codable {
-    case ecstatic = "В восторге!"
+    case ecstatic = "В восторге"
     case happy = "Счастлив"
     case neutral = "Спокоен"
     case tired = "Хочет спать"
     case hungry = "Голоден"
-    case sad = "Скучает"
+    case sad = "Грустит"
     
-    public var faceEmoji: String {
+    public var sfSymbol: String {
         switch self {
-        case .ecstatic: return "😻"
-        case .happy: return "😺"
-        case .neutral: return "😸"
-        case .tired: return "🥱"
-        case .hungry: return "🤤"
-        case .sad: return "😿"
+        case .ecstatic: return "star.fill"
+        case .happy: return "heart.fill"
+        case .neutral: return "circle.fill"
+        case .tired: return "zzz"
+        case .hungry: return "flame.fill"
+        case .sad: return "cloud.rain.fill"
         }
     }
 }
 
 /// Основная модель питомца
 public struct Mascot: Codable, Equatable {
-    public var name: String = "Бубу"
+    public var name: String = "Люми"
     public var hunger: Double = 85.0
     public var energy: Double = 90.0
     public var happiness: Double = 80.0
     public var lastUpdated: Date = Date()
     public var currentActivity: MascotActivity = .idle
-    public var thoughtBubble: String = "Мурр, как хорошо жить!"
+    public var thoughtBubble: String = "Тепло и уютно..."
     
     public init(
-        name: String = "Бубу",
+        name: String = "Люми",
         hunger: Double = 85.0,
         energy: Double = 90.0,
         happiness: Double = 80.0,
         lastUpdated: Date = Date(),
         currentActivity: MascotActivity = .idle,
-        thoughtBubble: String = "Мурр, как хорошо жить!"
+        thoughtBubble: String = "Тепло и уютно..."
     ) {
         self.name = name
         self.hunger = hunger
@@ -92,25 +92,24 @@ public struct Mascot: Codable, Equatable {
     public static func randomThought(for activity: MascotActivity, mood: MascotMood) -> String {
         switch (activity, mood) {
         case (.sleeping, _):
-            return ["Сплю сладким сном... zZz", "Снятся рыбки и молочко", "Тихо-тихо... мурр"].randomElement()!
+            return ["Сплю сладким сном...", "Тихо и спокойно вокруг", "Восстанавливаю силы"].randomElement()!
         case (.eating, _):
-            return ["Ням-ням, вкуснотища!", "Обожаю перекусы!", "Спасибо за угощение!"].randomElement()!
+            return ["Очень вкусно!", "Заряжаюсь энергией", "Спасибо за заботу"].randomElement()!
         case (.playing, _):
-            return ["Ловлю бантик!", "Ура, ты со мной играешь!", "Прыг-скок!"].randomElement()!
+            return ["Как же весело!", "Прыгаю от радости", "Обожаю двигаться"].randomElement()!
         case (_, .hungry):
-            return ["Животик урчит... Покорми меня!", "Хочу вкусняшку!", "Где моя рыбка? 🐟"].randomElement()!
+            return ["Животик пустой...", "Пора бы перекусить", "Жду вкусняшку"].randomElement()!
         case (_, .tired):
-            return ["Зевок... Глазки слипаются", "Пора в кроватку", "Отдохну немножко"].randomElement()!
+            return ["Глазки слипаются", "Пора отдохнуть", "Тянет в сон"].randomElement()!
         case (_, .sad):
-            return ["Мне одиноко...", "Погладь меня за ушком", "Скучаю по тебе"].randomElement()!
+            return ["Немного грустно...", "Хочется внимания", "Побудь со мной"].randomElement()!
         default:
             return [
-                "Ловлю солнечных зайчиков ☀️",
-                "Жизнь на острове прекрасна!",
-                "Я тут, наблюдаю за тобой!",
-                "Мурлыкаю от счастья 💕",
-                "Интересно, что мы будем делать дальше?",
-                "Надеюсь, у тебя отличный день!"
+                "Ловлю лучи света",
+                "Отличный день для открытий",
+                "Наблюдаю за миром вокруг",
+                "Чувствую гармонию и покой",
+                "Интересно, что будет дальше?"
             ].randomElement()!
         }
     }
