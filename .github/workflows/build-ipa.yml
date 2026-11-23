@@ -1,0 +1,57 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: # Позволяет запускать сборку вручную одной кнопкой в интерфейсе GitHub
+
+jobs:
+  build:
+    name: Build Island Mascot IPA
+    runs-on: macos-14 # Официальный macOS Apple Silicon раннер GitHub
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+
+      - name: Select Xcode Version
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
+      - name: Build and Archive
+        run: |
+          mkdir -p build/archive
+          mkdir -p build/ipa/Payload
+          
+          # Сборка архива без требования платного аккаунта разработчика (CODE_SIGNING_ALLOWED=NO)
+          xcodebuild archive \
+            -project IslandMascot.xcodeproj \
+            -scheme IslandMascot \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath build/archive/IslandMascot.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
+
+      - name: Package into .IPA
+        run: |
+          # Копируем .app внутрь каталога Payload
+          cp -r build/archive/IslandMascot.xcarchive/Products/Applications/IslandMascot.app build/ipa/Payload/
+          
+          # Упаковываем в готовый .ipa архив
+          cd build/ipa
+          zip -r -q IslandMascot.ipa Payload
+          cd ../..
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: IslandMascot-iOS-IPA
+          path: build/ipa/IslandMascot.ipa
+          if-no-files-found: error

@@ -1,0 +1,58 @@
+name: IslandMascot
+options:
+  bundleIdPrefix: com.islandmascot
+  deploymentTarget:
+    iOS: "16.1"
+  xcodeVersion: "15.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    IPHONEOS_DEPLOYMENT_TARGET: "16.1"
+    TARGETED_DEVICE_FAMILY: "1" # iPhone
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+  IslandMascot:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.1"
+    sources:
+      - path: IslandMascot
+    info:
+      path: IslandMascot/App/Info.plist
+      properties:
+        CFBundleDisplayName: "Island Mascot"
+        NSSupportsLiveActivities: true
+        NSSupportsLiveActivitiesFrequentUpdates: true
+        UILaunchScreen: {}
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.islandmascot.app
+        INFOPLIST_FILE: IslandMascot/App/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_PREVIEWS: YES
+    dependencies:
+      - target: IslandMascotWidget
+
+  IslandMascotWidget:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "16.1"
+    sources:
+      - path: IslandMascotWidget
+      - path: IslandMascot/Models/MascotModel.swift
+      - path: IslandMascot/Models/MascotAttributes.swift
+    info:
+      path: IslandMascotWidget/Info.plist
+      properties:
+        CFBundleDisplayName: "Island Mascot Widget"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        NSSupportsLiveActivities: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.islandmascot.app.widget
+        INFOPLIST_FILE: IslandMascotWidget/Info.plist
+        ENABLE_PREVIEWS: YES
