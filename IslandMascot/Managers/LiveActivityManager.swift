@@ -61,3 +61,4 @@ class LiveActivityManager {
         currentActivity = nil
     }
 }
+

@@ -43,3 +43,4 @@ public struct MascotAttributes: ActivityAttributes {
         self.petId = petId
     }
 }
+

@@ -3,12 +3,12 @@ name: Build iOS IPA
 on:
   push:
     branches: [ main, master ]
-  workflow_dispatch: # Позволяет запускать сборку вручную одной кнопкой в интерфейсе GitHub
+  workflow_dispatch:
 
 jobs:
   build:
     name: Build Island Mascot IPA
-    runs-on: macos-14 # Официальный macOS Apple Silicon раннер GitHub
+    runs-on: macos-13 # Общедоступный стабильный раннер macOS Intel с предустановленным Xcode 15
 
     steps:
       - name: Checkout Repository
@@ -20,15 +20,12 @@ jobs:
       - name: Generate Xcode Project
         run: xcodegen generate
 
-      - name: Select Xcode Version
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app
-
       - name: Build and Archive
         run: |
           mkdir -p build/archive
           mkdir -p build/ipa/Payload
           
-          # Сборка архива без требования платного аккаунта разработчика (CODE_SIGNING_ALLOWED=NO)
+          # Сборка архива без требования платного сертификата разработчика
           xcodebuild archive \
             -project IslandMascot.xcodeproj \
             -scheme IslandMascot \

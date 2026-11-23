@@ -30,3 +30,4 @@ struct IslandMascotApp: App {
         }
     }
 }
+

@@ -98,3 +98,4 @@ struct Mascot: Codable, Equatable {
         }
     }
 }
+

@@ -139,3 +139,4 @@ struct LockScreenMascotBanner: View {
         .padding(14)
     }
 }
+
