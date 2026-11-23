@@ -14,10 +14,10 @@ public class MascotManager: ObservableObject {
     public init() {
         if let groupDefaults = UserDefaults(suiteName: userDefaultsSuite),
            let data = groupDefaults.data(forKey: mascotStorageKey),
-           let saved = try? JSONDecoder().decode(Mascot.self, data) {
+           let saved = try? JSONDecoder().decode(Mascot.self, from: data) {
             self.mascot = saved
         } else if let data = UserDefaults.standard.data(forKey: mascotStorageKey),
-                  let saved = try? JSONDecoder().decode(Mascot.self, data) {
+                  let saved = try? JSONDecoder().decode(Mascot.self, from: data) {
             self.mascot = saved
         } else {
             self.mascot = Mascot()

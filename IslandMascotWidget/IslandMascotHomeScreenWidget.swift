@@ -55,11 +55,11 @@ public struct MascotTimelineProvider: TimelineProvider {
     private func loadCurrentMascot() -> Mascot {
         if let groupDefaults = UserDefaults(suiteName: userDefaultsSuite),
            let data = groupDefaults.data(forKey: mascotStorageKey),
-           let mascot = try? JSONDecoder().decode(Mascot.self, data) {
+           let mascot = try? JSONDecoder().decode(Mascot.self, from: data) {
             return mascot
         }
         if let data = UserDefaults.standard.data(forKey: mascotStorageKey),
-           let mascot = try? JSONDecoder().decode(Mascot.self, data) {
+           let mascot = try? JSONDecoder().decode(Mascot.self, from: data) {
             return mascot
         }
         return Mascot()
